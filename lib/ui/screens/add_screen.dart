@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:home_work5_contact_app/repository/repository.dart';
 
 import '../../config/colors.dart';
 import '../../config/strings.dart';
@@ -15,9 +16,35 @@ class AddScreen extends StatefulWidget {
 class _AddScreenState extends State<AddScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final phoneRegExp = RegExp(r'^\+?[0-9]{10,15}\$');
+  String? errorName;
+  String? errorPhone;
+
+  void onClickAdd() async{
+    setState(() {
+      if(nameController.text.isEmpty){
+        errorName = "The field must be filled in";
+      }
+      if(phoneController.text.isEmpty){
+        errorPhone = "The field must be filled in";
+      }
+      if(nameController.text.length<3){
+        errorName = "Name is not a suitable length";
+      }
+      if(!phoneRegExp.hasMatch(phoneController.text)){
+        errorPhone = "The phone number format is incorrect";
+      }
+      if(nameController.text.length>2){
+        Navigator.pop(context,{"name":nameController.text, "phone":phoneController.text});
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+
+    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -44,6 +71,7 @@ class _AddScreenState extends State<AddScreen> {
               controller: nameController,
               hintText: AppText.hintName,
               iconData: Icons.cancel_rounded,
+              errorText: errorName,
             ),
             const SizedBox(
               height: 24,
@@ -53,11 +81,12 @@ class _AddScreenState extends State<AddScreen> {
               hintText: AppText.hintPhone,
               iconData: Icons.cancel_rounded,
               keyBoardType: TextInputType.phone,
+              errorText: errorPhone,
             ),
             SizedBox(
               height: 56,
             ),
-            ButtonApp(onPressed: () {}, contentText: AppText.addButtonText),
+            ButtonApp(onPressed: onClickAdd, contentText: AppText.addButtonText),
             SizedBox(
               height: 252,
             )

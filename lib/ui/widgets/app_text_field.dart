@@ -8,6 +8,7 @@ class TextFieldApp extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyBoardType;
   final String values;
+  final String? errorText;
 
   const TextFieldApp(
       {super.key,
@@ -16,7 +17,8 @@ class TextFieldApp extends StatefulWidget {
       required this.iconData,
       this.isPassword = false,
       this.keyBoardType = TextInputType.text,
-      this.values = ""});
+      this.values = "",
+      this.errorText});
 
   @override
   State<TextFieldApp> createState() => _TextFieldAppState(value: values);
@@ -49,6 +51,8 @@ class _TextFieldAppState extends State<TextFieldApp> {
                     color: AppColor.hintColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w400),
+                errorText: widget.errorText,
+                errorStyle: TextStyle(color: Colors.red),
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() {
@@ -83,6 +87,8 @@ class _TextFieldAppState extends State<TextFieldApp> {
                     color: AppColor.hintColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w400),
+                errorText: widget.errorText,
+                errorStyle: TextStyle(color: Colors.red),
                 suffixIcon: value.isNotEmpty
                     ? IconButton(
                         onPressed: () {

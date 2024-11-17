@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:home_work5_contact_app/config/colors.dart';
 import 'package:home_work5_contact_app/config/strings.dart';
+import 'package:home_work5_contact_app/data/shared_pref.dart';
+import 'package:home_work5_contact_app/ui/screens/home_screen.dart';
 import 'package:home_work5_contact_app/ui/screens/register_screen.dart';
 import 'package:home_work5_contact_app/ui/widgets/app_button.dart';
 import 'package:home_work5_contact_app/ui/widgets/app_text_field.dart';
@@ -13,8 +15,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late final MyPref _myPref;
   final userController = TextEditingController();
   final passwordController = TextEditingController();
+  String? errorUserName;
+  String? errorPassword;
+
+
+  @override
+  initState() {
+    initMyPref();
+    super.initState();
+  }
+
+  Future<void> initMyPref() async {
+    _myPref = MyPref();
+    await _myPref.initMyPref();
+  }
+
+  void onClickLogin() {
+    setState(() {
+      if (userController.text.isEmpty) {
+        errorUserName = "The field must be filled in";
+      }
+      if (passwordController.text.isEmpty) {
+        errorPassword = "The field must be filled in";
+      }
+      if (!_myPref.getLogin().contains(userController.text)) {
+        errorUserName = "incorrect Username";
+      }
+      if (!_myPref.getPassword().contains(passwordController.text)) {
+        errorPassword = "incorrect Password";
+      }
+      if (_myPref.getLogin()==(userController.text) &&
+          _myPref.getPassword()==(passwordController.text)){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
+      }
+
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: userController,
               hintText: AppText.hintUserName,
               iconData: Icons.cancel_rounded,
+              errorText: errorUserName,
             ),
             const SizedBox(
               height: 24,
@@ -51,11 +91,13 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: AppText.hintPassword,
               iconData: Icons.cancel_rounded,
               isPassword: true,
+              errorText: errorPassword,
             ),
+
             SizedBox(
               height: 56,
             ),
-            ButtonApp(onPressed: () {}, contentText: AppText.loginButtonText),
+            ButtonApp(onPressed: onClickLogin, contentText: AppText.loginButtonText),
             SizedBox(
               height: 28,
             ),
@@ -72,8 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(width: 12,),
                 GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const RegisterScreen()));
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const RegisterScreen()));
                   },
                   child: Text(
                     AppText.loginText2,
