@@ -12,6 +12,28 @@ class MyPref{
     _pref = await SharedPreferences.getInstance();
   }
 
+  Future<bool> addUserList(String login, String password) async{
+   bool isContainLogin = getLoginList().contains(login);
+   if(isContainLogin) return false;
+   var loginList = getLoginList();
+   var passwordList = getPasswordList();
+   loginList.add(login);
+   passwordList.add(password);
+   await _pref.setStringList("loginList", loginList);
+   await _pref.setStringList("passwordList", passwordList);
+   return true;
+  }
+
+  List<String> getLoginList() {
+    return _pref.getStringList("loginList")?? [];
+
+  }
+
+  List<String> getPasswordList() {
+    return _pref.getStringList("passwordList")?? [];
+
+  }
+
   Future<void> saveLoginPassword(String login, String password) async{
     await _pref.setString("login", login);
     await _pref.setString("password", password);
@@ -42,6 +64,10 @@ class MyPref{
       ls.add({"name":tempNames[i],"phone":tempPhones[i]});
     }
     return ls;
+  }
+
+  Future<void> clearShared() async{
+    await _pref.clear();
   }
 
   String getLogin(){

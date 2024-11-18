@@ -6,7 +6,8 @@ import '../widgets/app_button.dart';
 import '../widgets/app_text_field.dart';
 
 class EditScreen extends StatefulWidget {
-  const EditScreen({super.key});
+  final Map<String, String> contact;
+  const EditScreen({super.key, required this.contact});
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -14,11 +15,38 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   final TextEditingController eNameController = TextEditingController();
   final TextEditingController ePhoneController = TextEditingController();
+  String? errorName;
+  String? errorPhone;
+
+
   @override
   void initState() {
-    eNameController.text = "Dilshod";
-    ePhoneController.text = "+998900997530";
+    eNameController.text = widget.contact["name"].toString();
+    ePhoneController.text = widget.contact["phone"].toString();
     super.initState();
+  }
+
+  void onClickUpdate(){
+    setState(() {
+      if(eNameController.text.isEmpty){
+        errorName = "The field must be filled in";
+      }
+      if(ePhoneController.text.isEmpty){
+        errorPhone = "The field must be filled in";
+      }
+      if(eNameController.text.length<3){
+        errorName = "Name is not a suitable length";
+      }
+      // if(!phoneRegExp.hasMatch(phoneController.text)){
+      //   errorPhone = "The phone number format is incorrect";
+      // }
+      if(eNameController.text.length>2)
+    {
+      Navigator.pop(context,
+          {"name": eNameController.text, "phone": ePhoneController.text});
+    }
+  });
+
   }
   @override
   Widget build(BuildContext context) {
@@ -49,6 +77,7 @@ class _EditScreenState extends State<EditScreen> {
               hintText: AppText.hintName,
               iconData: Icons.cancel_rounded,
               values: eNameController.text,
+              errorText: errorName,
             ),
             const SizedBox(
               height: 24,
@@ -59,11 +88,12 @@ class _EditScreenState extends State<EditScreen> {
               iconData: Icons.cancel_rounded,
               keyBoardType: TextInputType.phone,
               values: ePhoneController.text,
+              errorText: errorPhone,
             ),
             SizedBox(
               height: 56,
             ),
-            ButtonApp(onPressed: () {}, contentText: AppText.editButtonText),
+            ButtonApp(onPressed: onClickUpdate, contentText: AppText.editButtonText),
             SizedBox(
               height: 252,
             )
